@@ -1,89 +1,122 @@
 <template>
   <div>
-    <div class="content">
-      <div class="ui grid">
-        <div class="row">
-          <div class="eight wide column">
-            <h4 class="ui horizontal divider header">
-              <i class="icon hand lizard"></i>
-              VARIABLES
-            </h4>
-            {{task.vars}}
-            <!-- <table class="ui definition compact table">
-              <tbody>
-                <tr :for="(value, propertyName, index) in task.vars" :key="index">
-                  <td class="two wide column" :bind="propertyName"></td>
-                  <td :bind="value"></td>
-                </tr>
-              </tbody>
-            </table> -->
-          </div>
-          <div class="eight wide column">
-            <h4 class="ui horizontal divider header">
-              <i class="icon hand spock"></i>
-              PARAMETERS
-            </h4>
-            {{task.params}}
-            <!-- <table class="ui definition compact table">
-              <tbody>
-                <tr :for="(param, index) in task.params" :key="index">
-                  <td class="two wide column" :bind="param"></td>
-                  <td>{{ mcs.val_link(t.params.get(key)) }}</td>
-                </tr>
-              </tbody>
-            </table> -->
-          </div>
+    <el-row>
+      <el-col :span="12">
+        <h4>
+          <i class="far fa-hand-lizard"></i>
+          VARIABLES
+        </h4>
+        <table>
+          <tr v-for="(value, propertyName, index) in task.vars" :key="index">
+            <td>{{propertyName}}</td>
+            <td v-html="tryLink(value)"></td>
+          </tr>
+        </table>
+      </el-col>
+      <el-col :span="12">
+        <h4 class="ui horizontal divider header">
+          <i class="far fa-hand-spock"></i>
+          PARAMETERS
+        </h4>
+        <table>
+          <tr v-for="(value, propertyName, index) in task.params" :key="index">
+            <td>{{propertyName}}</td>
+            <td v-html="tryLink(value)"></td>
+          </tr>
+        </table>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :span="12">
+        <h4 class="ui horizontal divider header">
+          <i class="far fa-hand-rock"></i>
+          COMMON
+        </h4>
+        <table class="ui definition compact table">
+          <tbody>
+            <tr>
+              <td class="two wide column">oid</td>
+              <td class="code">{{ task.oid }}</td>
+            </tr>
+            <tr>
+              <td class="two wide column">job</td>
+              <td class="code">{{ task.job }}</td>
+            </tr>
+            <tr>
+              <td class="two wide column">schedule</td>
+              <td class="code">
+                <span v-for="(sched, index) in task.schedule" :key="index">
+                  {{sched}}
+                  <br>
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </el-col>
+      <el-col :span="12">
+        <h4 class="ui horizontal divider header">
+          <i class="far fa-hand-scissors"></i>
+          OPERATIONS
+        </h4>
+        <div>
+          <el-button
+            plain
+            type="primary"
+            size="medium"
+            @click="confirmRun"
+          ><i class="fas no-fa fa-running"></i>
+          Run job</el-button>
+          <el-button
+            plain
+            type="danger"
+            size="medium"
+            @click="confirmDelete"
+          ><i class="fas no-fa fa-eraser"></i> Remove job</el-button>
         </div>
-        <div class="row">
-          <div class="eight wide column">
-            <h4 class="ui horizontal divider header">
-              <i class="icon hand rock"></i>
-              COMMON
-            </h4>
-            <table class="ui definition compact table">
-              <tbody>
-                <tr>
-                  <td class="two wide column">oid</td>
-                  <td class="code">{{ task.oid }}</td>
-                </tr>
-                <tr>
-                  <td class="two wide column">job</td>
-                  <td class="code">{{ task.job }}</td>
-                </tr>
-                <tr>
-                  <td class="two wide column">schedule</td>
-                  <td class="code">
-                    <span v-for="(sched, index) in task.schedule" :key="index">
-                      {{sched}}
-                      <br>
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="eight wide column">
-            <h4 class="ui horizontal divider header">
-              <i class="icon hand scissors"></i>
-              OPERATIONS
-            </h4>
-            <div>
-              <el-button plain type="success" size="mini" icon="el-icon-bell" :bind="task._id">Run job</el-button>
-              <el-button plain type="danger" size="mini" icon="el-icon-delete" :bind="task._id">Remove job</el-button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
 export default {
   name: "task",
-  props: ["task"]
+  props: ["task"],
+  data() {
+    return {};
+  },
+  methods: {
+    tryLink: function(value, length = 50) {
+      if (typeof value == "string" && value.startsWith("http")) {
+        if (value.length > length)
+          return (
+            "<a href='" + value + "'>" + value.substring(0, length) + "...</a>"
+          );
+        return "<a href='" + value + "'>" + value + "</a>";
+      }
+      return value;
+    },
+    confirmRun() {
+      this.$confirm("Confirm run this job?", "Run Task", {
+        confirmButtonText: "OK",
+        cancelButtonText: "Cancel"
+      })
+        .then(() => {
+          console.log("running");
+        })
+        .catch(() => {});
+    },
+    confirmDelete() {
+      console.log(this.task);
+    }
+  }
 };
 </script>
 
 <style>
+.code {
+  font-family: "Inconsolata", monospace;
+  font-size: 14px;
+}
 </style>
