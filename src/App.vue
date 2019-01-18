@@ -33,12 +33,7 @@
 </template>
 
 <script>
-import axios from "axios";
 import Task from "./components/Task.vue";
-
-const axi = axios.create({
-  baseURL: "http://127.0.0.1:8088"
-});
 
 export default {
   name: "app",
@@ -46,7 +41,16 @@ export default {
     Task
   },
   created: function() {
-    axi.get("/api/tasks").then(data => (this.tasks = data.data));
+    this.$bus.$on('fetchData', this.fetchData);
+    this.fetchData();
+  },
+  destroyed: function() {
+    this.$bus.$off('fetchData', this.fetchData);
+  },
+  methods: {
+    fetchData: function() {
+      this.$axi.get("/api/tasks").then(data => (this.tasks = data.data));
+    }
   },
   data() {
     return {
@@ -83,4 +87,5 @@ html {
   padding-right: 0;
   font-size: 1em;
 }
+
 </style>

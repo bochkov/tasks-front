@@ -60,19 +60,13 @@
           OPERATIONS
         </h4>
         <div>
-          <el-button
-            plain
-            type="primary"
-            size="medium"
-            @click="confirmRun"
-          ><i class="fas no-fa fa-running"></i>
-          Run job</el-button>
-          <el-button
-            plain
-            type="danger"
-            size="medium"
-            @click="confirmDelete"
-          ><i class="fas no-fa fa-eraser"></i> Remove job</el-button>
+          <el-button plain type="primary" size="medium" @click="confirmRun">
+            <i class="fas no-fa fa-running"></i>
+            Run job
+          </el-button>
+          <el-button plain type="danger" size="medium" @click="confirmDelete">
+            <i class="fas no-fa fa-eraser"></i> Remove job
+          </el-button>
         </div>
       </el-col>
     </el-row>
@@ -98,17 +92,81 @@ export default {
       return value;
     },
     confirmRun() {
-      this.$confirm("Confirm run this job?", "Run Task", {
+      var msg = "";
+      this.$confirm(msg, "Run Task", {
         confirmButtonText: "OK",
         cancelButtonText: "Cancel"
       })
         .then(() => {
-          console.log("running");
+          this.$axi
+            .post("/api/run/", { id: [this.task.oid] })
+            .then(response => {
+              var msg, type;
+              if (response.data[this.task.oid].success) {
+                msg = "job runned";
+                type = "success";
+              } else {
+                msg = "something wrong";
+                type = "error";
+              }
+              this.$message({
+                message: msg,
+                type: type,
+                center: true
+              });
+            })
+            .catch(() => {
+              this.$message({
+                message: "something wrong",
+                type: "error",
+                center: true
+              });
+            });
         })
         .catch(() => {});
     },
     confirmDelete() {
-      console.log(this.task);
+      var msg = "";
+      this.$confirm(msg, "Delete Task", {
+        confirmButtonText: "OK",
+        cancelButtonText: "Cancel"
+      })
+        .then(() => {
+          this.$axi
+            .post("/api/delete/", { id: [this.task.oid] })
+            .then(response => {
+              var msg, type;
+              if (response.data[this.task.oid].success) {
+                msg = "job deleted";
+                type = "success";
+              } else {
+                msg = "something wrong";
+                type = "error";
+              }
+              this.$message({
+                message: msg,
+                type: type,
+                center: true
+              });
+              if (response.data[this.task.oid].success) {
+                const loading = this.$loading({
+                  lock: true,
+                  text: "Loading",
+                  background: "rgba(0, 0, 0, 0.7)"
+                });
+                this.$bus.$emit('fetchData');
+                loading.close();
+              }
+            })
+            .catch(() => {
+              this.$message({
+                message: "something wrong",
+                type: "error",
+                center: true
+              });
+            });
+        })
+        .catch(() => {});
     }
   }
 };
