@@ -91,7 +91,7 @@ export default {
       } else if (
         propertyName === "checked" ||
         propertyName === "created" ||
-        propertyName === "downloadDate"
+        propertyName === "download_date"
       ) {
         return moment(value).format("lll");
       }
