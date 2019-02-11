@@ -5,7 +5,6 @@ import App from './App.vue'
 
 Vue.config.productionTip = false
 
-Vue.prototype.$axi = axi;
 Vue.prototype.$bus = new Vue();
 
 const moment = require('moment');
