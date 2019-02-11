@@ -17,10 +17,12 @@
                     :class="[task.registered ? 'fa-check-circle success': 'fa-times-circle fail']"
                   ></i>
                 </td>
-                <td>{{ task.vars.name }}</td>
-                <td>
-                  {{ task.vars.checked|moment("HH:mm:ss") }}
+                <td class="col-title">{{ task.vars.name }}</td>
+                <td class="col-date">
                   {{ task.vars.checked|moment("D MMMM YYYY")|lower }}
+                </td>
+                <td class="col-time">
+                  {{ task.vars.checked|moment("HH:mm:ss") }}
                 </td>
               </tr>
             </table>
@@ -34,7 +36,7 @@
 
 <script>
 import Task from "./components/Task.vue";
-
+import axios from "axios";
 export default {
   name: "app",
   components: {
@@ -49,7 +51,7 @@ export default {
   },
   methods: {
     fetchData: function() {
-      this.$axi.get("/api/tasks").then(data => (this.tasks = data.data));
+      axios.get("/api/tasks").then(data => (this.tasks = data.data));
     }
   },
   data() {
@@ -86,6 +88,28 @@ html {
 .no-fa {
   padding-right: 0;
   font-size: 1em;
+}
+
+table {
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+td {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.col-title {
+  width: 700px;
+}
+
+.col-date {
+  width: 150px;
+}
+
+.col-time {
+  width: 150px;
 }
 
 </style>

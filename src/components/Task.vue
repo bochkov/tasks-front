@@ -1,49 +1,48 @@
 <template>
   <div>
-    <el-row>
+    <el-row :gutter="50">
       <el-col :span="12">
         <h4>
           <i class="far fa-hand-lizard"></i>
           VARIABLES
         </h4>
-        <table>
+        <table class="table-border">
           <tr v-for="(value, propertyName, index) in task.vars" :key="index">
             <td>{{propertyName}}</td>
-            <td v-html="tryLink(value)"></td>
+            <td v-html="tryLink(propertyName, value)"></td>
           </tr>
         </table>
       </el-col>
       <el-col :span="12">
-        <h4 class="ui horizontal divider header">
+        <h4>
           <i class="far fa-hand-spock"></i>
           PARAMETERS
         </h4>
-        <table>
+        <table class="table-border">
           <tr v-for="(value, propertyName, index) in task.params" :key="index">
             <td>{{propertyName}}</td>
-            <td v-html="tryLink(value)"></td>
+            <td v-html="tryLink(propertyName, value)"></td>
           </tr>
         </table>
       </el-col>
     </el-row>
-    <el-row>
+    <el-row :gutter="50">
       <el-col :span="12">
-        <h4 class="ui horizontal divider header">
+        <h4>
           <i class="far fa-hand-rock"></i>
           COMMON
         </h4>
-        <table class="ui definition compact table">
-          <tbody>
+        <table class="table-border">
             <tr>
-              <td class="two wide column">oid</td>
+              <td>oid</td>
               <td class="code">{{ task.oid }}</td>
             </tr>
             <tr>
-              <td class="two wide column">job</td>
+              <td>job</td>
               <td class="code">{{ task.job }}</td>
             </tr>
             <tr>
-              <td class="two wide column">schedule</td>
+              <td>schedule</td>
               <td class="code">
                 <span v-for="(sched, index) in task.schedule" :key="index">
                   {{sched}}
@@ -51,11 +50,10 @@
                 </span>
               </td>
             </tr>
-          </tbody>
         </table>
       </el-col>
       <el-col :span="12">
-        <h4 class="ui horizontal divider header">
+        <h4>
           <i class="far fa-hand-scissors"></i>
           OPERATIONS
         </h4>
@@ -74,6 +72,7 @@
 </template>
 
 <script>
+import moment from 'moment';
 export default {
   name: "task",
   props: ["task"],
@@ -81,13 +80,15 @@ export default {
     return {};
   },
   methods: {
-    tryLink: function(value, length = 50) {
+    tryLink: function(propertyName = "", value, length = 50) {
       if (typeof value == "string" && value.startsWith("http")) {
         if (value.length > length)
           return (
             "<a href='" + value + "'>" + value.substring(0, length) + "...</a>"
           );
         return "<a href='" + value + "'>" + value + "</a>";
+      } else if (propertyName === "checked" || propertyName === "created") {
+        return moment(value).format("lll")
       }
       return value;
     },
@@ -176,5 +177,13 @@ export default {
 .code {
   font-family: "Inconsolata", monospace;
   font-size: 14px;
+}
+
+.table-border {
+  border: 1px solid gray;
+}
+.table-border > tr > td {
+  padding: 5px;
+  border: 1px solid gray;
 }
 </style>
