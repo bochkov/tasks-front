@@ -33,23 +33,23 @@
           COMMON
         </h4>
         <table class="table-border">
-            <tr>
-              <td>oid</td>
-              <td class="code">{{ task.oid }}</td>
-            </tr>
-            <tr>
-              <td>job</td>
-              <td class="code">{{ task.job }}</td>
-            </tr>
-            <tr>
-              <td>schedule</td>
-              <td class="code">
-                <span v-for="(sched, index) in task.schedule" :key="index">
-                  {{sched}}
-                  <br>
-                </span>
-              </td>
-            </tr>
+          <tr>
+            <td>oid</td>
+            <td class="code">{{ task.oid }}</td>
+          </tr>
+          <tr>
+            <td>job</td>
+            <td class="code">{{ task.job }}</td>
+          </tr>
+          <tr>
+            <td>schedule</td>
+            <td class="code">
+              <span v-for="(sched, index) in task.schedule" :key="index">
+                {{sched}}
+                <br>
+              </span>
+            </td>
+          </tr>
         </table>
       </el-col>
       <el-col :span="12">
@@ -72,7 +72,8 @@
 </template>
 
 <script>
-import moment from 'moment';
+import moment from "moment";
+import axios from "axios";
 export default {
   name: "task",
   props: ["task"],
@@ -87,8 +88,12 @@ export default {
             "<a href='" + value + "'>" + value.substring(0, length) + "...</a>"
           );
         return "<a href='" + value + "'>" + value + "</a>";
-      } else if (propertyName === "checked" || propertyName === "created") {
-        return moment(value).format("lll")
+      } else if (
+        propertyName === "checked" ||
+        propertyName === "created" ||
+        propertyName === "downloadDate"
+      ) {
+        return moment(value).format("lll");
       }
       return value;
     },
@@ -99,7 +104,7 @@ export default {
         cancelButtonText: "Cancel"
       })
         .then(() => {
-          this.$axi
+          axios
             .post("/api/run/", { id: [this.task.oid] })
             .then(response => {
               var msg, type;
@@ -133,7 +138,7 @@ export default {
         cancelButtonText: "Cancel"
       })
         .then(() => {
-          this.$axi
+          axios
             .post("/api/delete/", { id: [this.task.oid] })
             .then(response => {
               var msg, type;
@@ -155,7 +160,7 @@ export default {
                   text: "Loading",
                   background: "rgba(0, 0, 0, 0.7)"
                 });
-                this.$bus.$emit('fetchData');
+                this.$bus.$emit("fetchData");
                 loading.close();
               }
             })
