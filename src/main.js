@@ -14,6 +14,8 @@ Vue.use(ElementUI);
 Vue.use(require('vue-moment'), { moment });
 
 Vue.filter('lower', function (value) {
+  if (value === undefined)
+    return "";
   return value.toLowerCase();
 });
 
