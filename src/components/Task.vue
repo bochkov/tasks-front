@@ -72,7 +72,6 @@
 </template>
 
 <script>
-import moment from "moment";
 import axios from "axios";
 export default {
   name: "task",
@@ -93,7 +92,7 @@ export default {
         propertyName === "created" ||
         propertyName === "download_date"
       ) {
-        return moment(value).format("lll");
+        return this.$moment(value).format("lll");
       }
       return value;
     },
